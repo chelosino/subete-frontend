@@ -23,6 +23,7 @@ function Router() {
       <Route path="/pago-confirmado/:campaignId/:productId?" component={PaymentSuccessPage} />
       <Route path="/seguimiento/:trackingId" component={TrackingPage} />
       <Route path="/widget" component={WidgetEmbed} />
+      <Route path="/embed" component={EmbedApp} />
       <Route component={NotFound} />
     </Switch>
   );
