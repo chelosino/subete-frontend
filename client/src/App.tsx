@@ -12,6 +12,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Toast from "@/components/Toast";
 import { CampaignProvider } from "@/context/CampaignContext";
+import WidgetEmbed from "@/pages/WidgetEmbed";
 
 function Router() {
   return (
