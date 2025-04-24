@@ -10,7 +10,6 @@ function App() {
 
   return (
     <>
-      <Route path="/" component={() => <Redirect to="/widget" />} />
       <Route path="/widget" component={Widget} />
       <div>
         <a href="https://vite.dev" target="_blank">
