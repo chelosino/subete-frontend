@@ -1,5 +1,3 @@
-import React from 'react';
-
 const Widget = () => {
   return (
     <div style={{ padding: 20 }}>
