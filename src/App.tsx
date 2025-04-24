@@ -2,7 +2,7 @@ import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
-import { Route } from "wouter";
+import { Route, Redirect } from "wouter";
 import Widget from "./pages/Widget";
 
 function App() {
@@ -10,6 +10,7 @@ function App() {
 
   return (
     <>
+      <Route path="/" component={() => <Redirect to="/widget" />} />
       <Route path="/widget" component={Widget} />
       <div>
         <a href="https://vite.dev" target="_blank">
