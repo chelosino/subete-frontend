@@ -1,5 +1,5 @@
-import CampaignProgress from "@/components/CampaignProgress";
-import ParticipantsList from "@/components/ParticipantsList";
+import CampaignProgress from "../components/CampaignProgress";
+import ParticipantsList from "../components/ParticipantsList";
 
 export default function Widget() {
   const participantes = [
