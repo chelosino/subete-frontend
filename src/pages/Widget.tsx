@@ -3,12 +3,13 @@ import CampaignProgress from "../components/CampaignProgress";
 import ParticipantsList from "../components/ParticipantsList";
 import { supabase } from "../lib/supabaseClient";
 
+// 👇 Reemplazá esto con el ID real de tu campaña en Supabase
+const CAMPAIGN_ID = "1a8cbcf6-5b06-460b-b28d-be76bac0a51e";
+
 export default function Widget() {
   const [participantes, setParticipantes] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
-  const meta = 5;
-  const CAMPAIGN_ID = "1a8cbcf6-5b06-460b-b28d-be76bac0a51e"; // reemplazar con ID real
-
+  const [meta, setMeta] = useState(5); // valor por defecto
 
   async function fetchParticipantes() {
     const { data, error } = await supabase
@@ -20,6 +21,20 @@ export default function Widget() {
       setParticipantes(data);
     } else {
       console.error("❌ Error cargando participantes:", error);
+    }
+  }
+
+  async function fetchCampaña() {
+    const { data, error } = await supabase
+      .from("campaigns")
+      .select("*")
+      .eq("id", CAMPAIGN_ID)
+      .single();
+
+    if (!error && data) {
+      setMeta(data.meta || 5);
+    } else {
+      console.error("❌ Error cargando campaña:", error);
     }
   }
 
@@ -36,13 +51,14 @@ export default function Widget() {
     if (error) {
       console.error("❌ Error al unirse:", error);
     } else {
-      await fetchParticipantes(); // volver a cargar
+      await fetchParticipantes();
     }
 
     setLoading(false);
   }
 
   useEffect(() => {
+    fetchCampaña();
     fetchParticipantes();
   }, []);
 
