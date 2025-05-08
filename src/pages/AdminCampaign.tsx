@@ -18,7 +18,6 @@ export default function AdminCampaign() {
   const [, params] = useRoute("/admin/campaign/:id");
   const id = params?.id;
   const shop = new URLSearchParams(window.location.search).get("shop");
-
   const [participants, setParticipants] = useState<Participant[]>([]);
   const [campaign, setCampaign] = useState<Campaign | null>(null);
 
