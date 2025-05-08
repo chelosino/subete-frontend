@@ -4,7 +4,8 @@ import { useRoute } from "wouter";
 interface Participant {
   id: string;
   name: string;
-  campaign_id: string;
+  email: string;
+  joined_at: string;
 }
 
 interface Campaign {
