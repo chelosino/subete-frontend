@@ -33,7 +33,7 @@ export default function AdminCampaigns() {
               <p>Meta: {c.meta}</p>
               <p className="text-sm text-gray-500">Creada: {new Date(c.created_at).toLocaleString()}</p>
               <a
-                href={`/admin/campaña/${c.id}?shop=${shop}`}
+                href={`/admin/campaign/${c.id}?shop=${shop}`}
                 className="text-blue-600 underline"
               >
                 Ver detalles →
