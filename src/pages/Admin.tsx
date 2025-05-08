@@ -4,6 +4,7 @@ export default function Admin() {
   const [nombre, setNombre] = useState("");
   const [meta, setMeta] = useState(5);
   const [mensaje, setMensaje] = useState("");
+  const shop = new URLSearchParams(window.location.search).get("shop");
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -11,7 +12,7 @@ export default function Admin() {
     const res = await fetch("https://subete-backend.onrender.com/api/create-campaign", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ nombre, meta }),
+      body: JSON.stringify({ nombre, meta, shop }),
     });
 
     if (res.ok) {
