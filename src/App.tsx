@@ -5,7 +5,7 @@ import './App.css'
 import { Route, Redirect } from "wouter";
 import Widget from "./pages/Widget";
 import Admin from "./pages/Admin";
-import AdminCampaigns from "./pages/AdminCampaigns"
+import AdminCampaigns from "./pages/AdminCampaigns";
 
 function App() {
   const [count, setCount] = useState(0)
