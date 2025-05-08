@@ -32,10 +32,22 @@ export default function AdminCampaigns() {
               <h2 className="text-lg font-semibold">{c.nombre}</h2>
               <p>Meta: {c.meta}</p>
               <p className="text-sm text-gray-500">Creada: {new Date(c.created_at).toLocaleString()}</p>
+              <a
+                href={`/admin/campaña/${c.id}?shop=${shop}`}
+                className="text-blue-600 underline"
+              >
+                Ver detalles →
+              </a>
             </li>
           ))}
         </ul>
       )}
+      <a
+        href={`/admin/campañas?shop=${shop}`}
+        className="inline-block mt-4 text-blue-600 hover:underline"
+      >
+        Ver campañas existentes
+      </a>
     </div>
   );
 }
