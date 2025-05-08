@@ -50,7 +50,7 @@ export default function AdminCampaign() {
       ) : (
         <ul className="list-disc pl-6">
           {participants.map((p) => (
-            <li key={p.id}>{p.name}</li>
+            <li key={p.id}>{p.name} ({p.email})</li>
           ))}
         </ul>
       )}
