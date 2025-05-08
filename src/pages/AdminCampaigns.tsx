@@ -29,8 +29,8 @@ export default function AdminCampaigns() {
         <ul className="space-y-4">
           {campaign.map((c) => (
             <li key={c.id} className="p-4 border rounded shadow">
-              <h2 className="text-lg font-semibold">{c.nombre}</h2>
-              <p>Meta: {c.meta}</p>
+              <h2 className="text-lg font-semibold">{c.name}</h2>
+              <p>Meta: {c.goal}</p>
               <p className="text-sm text-gray-500">Creada: {new Date(c.created_at).toLocaleString()}</p>
               <a
                 href={`/admin/campaign/${c.id}?shop=${shop}`}

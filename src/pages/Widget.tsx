@@ -18,7 +18,7 @@ export default function Widget() {
       .eq("campaign_id", CAMPAIGN_ID);
 
     if (!error && data) {
-      setParticipantes(data);
+      setParticipants(data);
     } else {
       console.error("❌ Error cargando participantes:", error);
     }
