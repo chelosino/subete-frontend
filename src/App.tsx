@@ -12,6 +12,7 @@ function App() {
     <>
       <Route path="/" component={() => <Redirect to="/widget" />} />
       <Route path="/widget" component={Widget} />
+      <Route path="/admin" component={Admin} />
       <div>
         <a href="https://vite.dev" target="_blank">
           <img src={viteLogo} className="logo" alt="Vite logo" />
