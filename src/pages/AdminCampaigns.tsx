@@ -43,7 +43,7 @@ export default function AdminCampaigns() {
         </ul>
       )}
       <a
-        href={`/admin/campañas?shop=${shop}`}
+        href={`/admin/campaigns?shop=${shop}`}
         className="inline-block mt-4 text-blue-600 hover:underline"
       >
         Ver campañas existentes
