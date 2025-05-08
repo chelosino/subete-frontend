@@ -4,6 +4,7 @@ import viteLogo from '/vite.svg'
 import './App.css'
 import { Route, Redirect } from "wouter";
 import Widget from "./pages/Widget";
+import Admin from "./pages/Admin";
 
 function App() {
   const [count, setCount] = useState(0)
