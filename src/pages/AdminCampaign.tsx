@@ -31,9 +31,18 @@ export default function AdminCampaign() {
       .catch((err) => console.error("Error fetching campaign:", err));
 
     // Fetch participants
+
+    console.log("👀 campaign_id usado:", id);
     fetch(`https://subete-backend.onrender.com/api/participants?campaign_id=${id}`)
       .then((res) => res.json())
-      .then((data) => setParticipants(data))
+      .then((data) => {
+        if (Array.isArray(data)) {
+          setParticipants(data);
+        } else {
+          console.warn("⚠️ Participantes inválidos:", data);
+          setParticipants([]);
+        }
+      })
       .catch((err) => console.error("Error fetching participants:", err));
   }, [id, shop]);
 
