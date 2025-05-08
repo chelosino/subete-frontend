@@ -4,7 +4,7 @@ import { useRoute } from "wouter";
 interface Participant {
   id: string;
   name: string;
-  created_at: string;
+  campaign_id: string;
 }
 
 interface Campaign {
@@ -31,18 +31,9 @@ export default function AdminCampaign() {
       .catch((err) => console.error("Error fetching campaign:", err));
 
     // Fetch participants
-
-    console.log("👀 campaign_id usado:", id);
     fetch(`https://subete-backend.onrender.com/api/participants?campaign_id=${id}`)
       .then((res) => res.json())
-      .then((data) => {
-        if (Array.isArray(data)) {
-          setParticipants(data);
-        } else {
-          console.warn("⚠️ Participantes inválidos:", data);
-          setParticipants([]);
-        }
-      })
+      .then((data) => setParticipants(data))
       .catch((err) => console.error("Error fetching participants:", err));
   }, [id, shop]);
 

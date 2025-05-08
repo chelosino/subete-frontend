@@ -7,11 +7,11 @@ import { supabase } from "../lib/supabaseClient";
 const CAMPAIGN_ID = "1a8cbcf6-5b06-460b-b28d-be76bac0a51e";
 
 export default function Widget() {
-  const [participantes, setParticipantes] = useState<any[]>([]);
+  const [participants, setParticipants] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
-  const [meta, setMeta] = useState(5); // valor por defecto
+  const [goal, setGoal] = useState(5); // valor por defecto
 
-  async function fetchParticipantes() {
+  async function fetchParticipants() {
     const { data, error } = await supabase
       .from("participants")
       .select("*")
@@ -24,7 +24,7 @@ export default function Widget() {
     }
   }
 
-  async function fetchCampaña() {
+  async function fetchCampaign() {
     const { data, error } = await supabase
       .from("campaigns")
       .select("*")
@@ -32,43 +32,43 @@ export default function Widget() {
       .single();
 
     if (!error && data) {
-      setMeta(data.meta || 5);
+      setGoal(data.goal || 5);
     } else {
       console.error("❌ Error cargando campaña:", error);
     }
   }
 
-  async function handleUnirme() {
+  async function handleJoin() {
     setLoading(true);
 
-    const nuevo = {
-      nombre: `Cliente ${participantes.length + 1}`,
+    const newClient = {
+      name: `Cliente ${participants.length + 1}`,
       campaign_id: CAMPAIGN_ID,
     };
 
-    const { error } = await supabase.from("participants").insert(nuevo);
+    const { error } = await supabase.from("participants").insert(newClient);
 
     if (error) {
       console.error("❌ Error al unirse:", error);
     } else {
-      await fetchParticipantes();
+      await fetchParticipants();
     }
 
     setLoading(false);
   }
 
   useEffect(() => {
-    fetchCampaña();
-    fetchParticipantes();
+    fetchCampaign();
+    fetchParticipants();
   }, []);
 
   return (
     <div className="p-6 max-w-md mx-auto bg-white rounded-xl shadow-md space-y-4">
       <h1 className="text-xl font-bold">🛒 ¡Únete a esta campaña grupal!</h1>
-      <CampaignProgress progreso={participantes.length} meta={meta} />
-      <ParticipantsList participantes={participantes} />
+      <CampaignProgress progreso={participants.length} meta={goal} />
+      <ParticipantsList participantes={participants} />
       <button
-        onClick={handleUnirme}
+        onClick={handleJoin}
         disabled={loading}
         className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded disabled:opacity-50"
       >

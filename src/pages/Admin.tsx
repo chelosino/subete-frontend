@@ -1,9 +1,9 @@
 import { useState } from "react";
 
 export default function Admin() {
-  const [nombre, setNombre] = useState("");
-  const [meta, setMeta] = useState(5);
-  const [mensaje, setMensaje] = useState("");
+  const [name, setName] = useState("");
+  const [goal, setGoal] = useState(5);
+  const [message, setMessage] = useState("");
   const shop = new URLSearchParams(window.location.search).get("shop");
 
   async function handleSubmit(e: React.FormEvent) {
@@ -12,15 +12,15 @@ export default function Admin() {
     const res = await fetch("https://subete-backend.onrender.com/api/create-campaign", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ nombre, meta, shop }),
+      body: JSON.stringify({ name, goal, shop }),
     });
 
     if (res.ok) {
-      setMensaje("✅ Campaña creada correctamente");
-      setNombre("");
-      setMeta(5);
+      setMessage("✅ Campaña creada correctamente");
+      setName("");
+      setGoal(5);
     } else {
-      setMensaje("❌ Error al crear campaña");
+      setMessage("❌ Error al crear campaña");
     }
   }
 
@@ -30,16 +30,16 @@ export default function Admin() {
       <form onSubmit={handleSubmit} className="space-y-2">
         <input
           type="text"
-          value={nombre}
-          onChange={(e) => setNombre(e.target.value)}
+          value={name}
+          onChange={(e) => setName(e.target.value)}
           placeholder="Nombre de la campaña"
           className="w-full border p-2 rounded"
           required
         />
         <input
           type="number"
-          value={meta}
-          onChange={(e) => setMeta(Number(e.target.value))}
+          value={goal}
+          onChange={(e) => setGoal(Number(e.target.value))}
           min={1}
           className="w-full border p-2 rounded"
         />
@@ -50,7 +50,7 @@ export default function Admin() {
           Crear campaña
         </button>
       </form>
-      {mensaje && <p className="text-sm mt-2">{mensaje}</p>}
+      {message && <p className="text-sm mt-2">{message}</p>}
       <a
         href={`/admin/campaigns?shop=${shop}`}
         className="inline-block mt-4 text-blue-600 hover:underline"
