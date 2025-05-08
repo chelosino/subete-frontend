@@ -7,9 +7,14 @@ export default function Widget() {
   const [participantes, setParticipantes] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const meta = 5;
+  const CAMPAIGN_ID = "1a8cbcf6-5b06-460b-b28d-be76bac0a51e"; // reemplazar con ID real
+
 
   async function fetchParticipantes() {
-    const { data, error } = await supabase.from("participants").select("*");
+    const { data, error } = await supabase
+      .from("participants")
+      .select("*")
+      .eq("campaign_id", CAMPAIGN_ID);
 
     if (!error && data) {
       setParticipantes(data);
@@ -22,7 +27,8 @@ export default function Widget() {
     setLoading(true);
 
     const nuevo = {
-      nombre: `Cliente ${participantes.length + 1}`, // simulación
+      nombre: `Cliente ${participantes.length + 1}`,
+      campaign_id: CAMPAIGN_ID,
     };
 
     const { error } = await supabase.from("participants").insert(nuevo);
