@@ -52,7 +52,7 @@ export default function Admin() {
       </form>
       {mensaje && <p className="text-sm mt-2">{mensaje}</p>}
       <a
-        href={`/admin/campañas?shop=${shop}`}
+        href={`/admin/campaigns?shop=${shop}`}
         className="inline-block mt-4 text-blue-600 hover:underline"
       >
         Ver campañas existentes
