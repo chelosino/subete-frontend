@@ -6,7 +6,7 @@ import { Route, Redirect } from "wouter";
 import Widget from "./pages/Widget";
 import Admin from "./pages/Admin";
 import AdminCampaigns from "./pages/AdminCampaigns";
-import AdminCampaña from "./pages/AdminCampaña";
+import AdminCampaign from "./pages/AdminCampaign";
 
 function App() {
   const [count, setCount] = useState(0)
@@ -16,8 +16,8 @@ function App() {
       <Route path="/" component={() => <Redirect to="/widget" />} />
       <Route path="/widget" component={Widget} />
       <Route path="/admin" component={Admin} />
-      <Route path="/admin/campañas" component={AdminCampaigns} />
-      <Route path="/admin/campaña/:id" component={AdminCampaña} />
+      <Route path="/admin/campaigns" component={AdminCampaigns} />
+      <Route path="/admin/campaign/:id" component={AdminCampaign} />
       <div>
         <a href="https://vite.dev" target="_blank">
           <img src={viteLogo} className="logo" alt="Vite logo" />
