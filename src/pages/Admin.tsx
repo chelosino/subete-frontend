@@ -9,6 +9,19 @@ export default function Admin() {
   const [discount, setDiscount] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [search, setSearch] = useState("");
+  const [results, setResults] = useState<{ id: string; title: string }[]>([]);
+
+  const fetchProducts = async () => {
+    if (!shop || !search) return;
+
+    const res = await fetch(
+      `https://subete-backend.onrender.com/api/products?shop=${shop}&query=${encodeURIComponent(search)}`
+    );
+
+    const data = await res.json();
+    setResults(data);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -67,12 +80,29 @@ export default function Admin() {
         />
         <input
           type="text"
-          placeholder="ID del producto de Shopify"
+          placeholder="Buscar producto..."
           className="w-full p-2 border rounded"
-          value={productId}
-          onChange={(e) => setProductId(e.target.value)}
-          required
+          value={search}
+          onChange={(e) => {
+            setSearch(e.target.value);
+            setTimeout(fetchProducts, 300);
+          }}
         />
+        <ul className="border max-h-40 overflow-y-auto bg-white rounded">
+          {results.map((p) => (
+            <li
+              key={p.id}
+              className="px-2 py-1 hover:bg-gray-100 cursor-pointer text-sm"
+              onClick={() => {
+                setProductId(p.id.toString());
+                setSearch(p.title);
+                setResults([]);
+              }}
+            >
+              {p.title}
+            </li>
+          ))}
+        </ul>
         <input
           type="number"
           placeholder="Descuento (%)"
