@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 
 export default function Widget() {
+
+  const STOREFRONT_TOKEN = import.meta.env.VITE_SHOPIFY_STOREFRONT_TOKEN;
+  
   const shop = new URLSearchParams(window.location.search).get("shop");
   const productId = new URLSearchParams(window.location.search).get("product_id");
-
   const [campaign, setCampaign] = useState<any>(null);
   const [participants, setParticipants] = useState<any[]>([]);
   const [name, setName] = useState("");
