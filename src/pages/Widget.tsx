@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
+import { getShopifyProductPrice } from "../lib/shopify"; // ruta relativa
 
 export default function Widget() {
-
-  const STOREFRONT_TOKEN = import.meta.env.VITE_SHOPIFY_STOREFRONT_TOKEN;
-  
   const shop = new URLSearchParams(window.location.search).get("shop");
   const productId = new URLSearchParams(window.location.search).get("product_id");
+
   const [campaign, setCampaign] = useState<any>(null);
   const [participants, setParticipants] = useState<any[]>([]);
+  const [originalPrice, setOriginalPrice] = useState<string | null>(null);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
@@ -27,13 +27,22 @@ export default function Widget() {
 
   // Cargar participantes
   useEffect(() => {
-    if (!campaign?.id) return;
+    if (!campaign?.id || !shop) return;
 
     fetch(`https://subete-backend.onrender.com/api/participants?campaign_id=${campaign.id}&shop=${shop}`)
       .then((res) => res.json())
       .then((data) => setParticipants(data))
       .catch((err) => console.error("❌ Error loading participants:", err));
   }, [campaign?.id, shop]);
+
+  // Obtener precio original desde Shopify
+  useEffect(() => {
+    if (!shop || !productId) return;
+
+    getShopifyProductPrice(shop, productId)
+      .then((price) => setOriginalPrice(price))
+      .catch(() => setOriginalPrice(null));
+  }, [shop, productId]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -72,11 +81,11 @@ export default function Widget() {
   const progress = Math.min((participants.length / campaign.goal) * 100, 100).toFixed(0);
 
   return (
-    <div className="p-4 max-w-md mx-auto border rounded shadow bg-white space-y-4">
+    <div className="p-4 max-w-md mx-auto border rounded shadow bg-white space-y-4 text-sm">
       <h2 className="text-xl font-bold">{campaign.name}</h2>
 
       <div>
-        <p className="text-sm text-gray-700">
+        <p className="text-gray-700">
           Participantes: {participants.length} / {campaign.goal}
         </p>
         <div className="w-full bg-gray-200 rounded-full h-3">
@@ -87,13 +96,17 @@ export default function Widget() {
         </div>
       </div>
 
-      <div className="text-sm text-gray-600">
-        <p>
-          Precio regular: <s>$XX.XX</s> {/* puedes reemplazar con el real más adelante */}
-        </p>
+      <div className="text-gray-800">
+        {originalPrice && (
+          <p>
+            Precio regular: <s>${originalPrice}</s>
+          </p>
+        )}
         <p>
           Precio con campaña:{" "}
-          <span className="font-semibold text-green-600">${campaign.discounted_price}</span>
+          <span className="font-semibold text-green-600">
+            ${campaign.discounted_price}
+          </span>
         </p>
       </div>
 
@@ -121,7 +134,7 @@ export default function Widget() {
         >
           {loading ? "Enviando..." : "Unirme a esta campaña"}
         </button>
-        {message && <p className="text-sm text-center">{message}</p>}
+        {message && <p className="text-center">{message}</p>}
       </form>
     </div>
   );
