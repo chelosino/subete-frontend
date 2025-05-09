@@ -1,158 +1,126 @@
 import { useEffect, useState } from "react";
 
-interface Campaign {
-  id: string;
-  name: string;
-  goal: number;
-  created_at: string;
-}
-
-interface Participant {
-  id: string;
-  client_id: string;
-  campaign_id: string;
-}
-
 export default function Widget() {
   const shop = new URLSearchParams(window.location.search).get("shop");
+  const productId = new URLSearchParams(window.location.search).get("product_id");
 
-  const [campaign, setCampaign] = useState<Campaign | null>(null);
-  const [participants, setParticipants] = useState<Participant[]>([]);
+  const [campaign, setCampaign] = useState<any>(null);
+  const [participants, setParticipants] = useState<any[]>([]);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error" | "exists">("idle");
-  const [errorMsg, setErrorMsg] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
 
-  // 🔍 Cargar campaña activa
+  // Cargar campaña activa
   useEffect(() => {
-    if (!shop) return;
+    if (!shop || !productId) return;
 
-    fetch(`https://subete-backend.onrender.com/api/campaigns?shop=${shop}`)
+    fetch(
+      `https://subete-backend.onrender.com/api/campaigns/by-product?shop=${shop}&product_id=${productId}`
+    )
       .then((res) => res.json())
-      .then((data: Campaign[]) => {
-        if (data.length > 0) {
-          setCampaign(data[0]);
-        }
-      })
-      .catch((err) => {
-        console.error("❌ Error loading campaign:", err);
-        setCampaign(null);
-      });
-  }, [shop]);
+      .then((data) => setCampaign(data))
+      .catch((err) => console.error("❌ Error loading campaign:", err));
+  }, [shop, productId]);
 
-  // 👥 Cargar participantes de campaña
+  // Cargar participantes
   useEffect(() => {
     if (!campaign?.id) return;
 
-    fetch(`https://subete-backend.onrender.com/api/participants?campaign_id=${campaign.id}`)
+    fetch(`https://subete-backend.onrender.com/api/participants?campaign_id=${campaign.id}&shop=${shop}`)
       .then((res) => res.json())
-      .then((data: Participant[]) => setParticipants(data))
+      .then((data) => setParticipants(data))
       .catch((err) => console.error("❌ Error loading participants:", err));
-  }, [campaign?.id, status]); // ← se actualiza al inscribirse
+  }, [campaign?.id, shop]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email || !name || !campaign?.id) return;
+    if (!email || !name || !campaign?.id || !shop) return;
 
-    setStatus("loading");
-    setErrorMsg("");
+    setLoading(true);
+    setMessage("");
 
     const res = await fetch("https://subete-backend.onrender.com/api/participants", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        email,
         name,
+        email,
         campaign_id: campaign.id,
+        shop,
       }),
     });
 
-    const data = await res.json();
+    const result = await res.json();
 
     if (res.ok) {
-      setStatus("success");
+      setMessage("✅ ¡Te uniste exitosamente!");
+      setParticipants((prev) => [...prev, { name, email }]);
       setName("");
       setEmail("");
-    } else if (res.status === 409) {
-      setStatus("exists");
     } else {
-      setStatus("error");
-      setErrorMsg(data.error || "Unexpected error");
+      setMessage(`❌ ${result.error}`);
     }
+
+    setLoading(false);
   };
 
-  if (!campaign) {
-    return (
-      <div className="p-6 text-center">
-        <h2 className="text-lg font-semibold">No active campaign found</h2>
-        <p>This store doesn't have a campaign right now.</p>
-      </div>
-    );
-  }
+  if (!campaign) return <p className="p-4">No hay campañas activas para este producto.</p>;
 
-  const progress = Math.min((participants.length / campaign.goal) * 100, 100).toFixed(1);
+  const progress = Math.min((participants.length / campaign.goal) * 100, 100).toFixed(0);
 
   return (
-    <div className="p-6 max-w-xl mx-auto space-y-6">
-      <h1 className="text-2xl font-bold">{campaign.name}</h1>
-      <p className="text-gray-600">Help us reach our goal of {campaign.goal} participants!</p>
+    <div className="p-4 max-w-md mx-auto border rounded shadow bg-white space-y-4">
+      <h2 className="text-xl font-bold">{campaign.name}</h2>
 
-      {/* 🔵 Progreso de la campaña */}
       <div>
-        <div className="w-full bg-gray-200 rounded-full h-4 overflow-hidden">
+        <p className="text-sm text-gray-700">
+          Participantes: {participants.length} / {campaign.goal}
+        </p>
+        <div className="w-full bg-gray-200 rounded-full h-3">
           <div
-            className="bg-blue-600 h-full"
-            style={{ width: `${progress}%`, transition: "width 0.5s ease" }}
-          ></div>
+            className="bg-green-500 h-3 rounded-full"
+            style={{ width: `${progress}%` }}
+          />
         </div>
-        <p className="text-sm text-center mt-1">
-          {participants.length} / {campaign.goal} joined ({progress}%)
+      </div>
+
+      <div className="text-sm text-gray-600">
+        <p>
+          Precio regular: <s>$XX.XX</s> {/* puedes reemplazar con el real más adelante */}
+        </p>
+        <p>
+          Precio con campaña:{" "}
+          <span className="font-semibold text-green-600">${campaign.discounted_price}</span>
         </p>
       </div>
 
-      {/* 📝 Formulario */}
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium">Your Name</label>
-          <input
-            type="text"
-            className="w-full border rounded px-3 py-2"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium">Your Email</label>
-          <input
-            type="email"
-            className="w-full border rounded px-3 py-2"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </div>
-
+      <form onSubmit={handleSubmit} className="space-y-3">
+        <input
+          type="text"
+          placeholder="Tu nombre"
+          className="w-full p-2 border rounded"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          required
+        />
+        <input
+          type="email"
+          placeholder="Tu correo"
+          className="w-full p-2 border rounded"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
         <button
           type="submit"
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:opacity-50"
-          disabled={status === "loading"}
+          className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700 disabled:opacity-50"
+          disabled={loading}
         >
-          {status === "loading" ? "Sending..." : "Join Campaign"}
+          {loading ? "Enviando..." : "Unirme a esta campaña"}
         </button>
+        {message && <p className="text-sm text-center">{message}</p>}
       </form>
-
-      {/* 🟢 Feedback */}
-      {status === "success" && (
-        <p className="text-green-600 font-medium">🎉 Thanks for joining!</p>
-      )}
-      {status === "exists" && (
-        <p className="text-yellow-600 font-medium">You're already in this campaign.</p>
-      )}
-      {status === "error" && (
-        <p className="text-red-600 font-medium">Error: {errorMsg}</p>
-      )}
     </div>
   );
 }
